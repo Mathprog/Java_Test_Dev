@@ -4,10 +4,10 @@ compile:
     stage: build
     script:
         - cd src
-        - mvn compile --batch-mode
+        - mvn compile
 
 
 verify:
     script:
       - cd src
-      - mvn verify --batch-mode
+      - mvn clean verify
