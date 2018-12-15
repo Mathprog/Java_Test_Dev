@@ -3,9 +3,11 @@ image: maven:3.5.4-jdk-8
 compile:
     stage: build
     script:
+        - cd src
         - mvn compile --batch-mode
 
 
 verify:
     script:
+      - cd src
       - mvn verify --batch-mode
