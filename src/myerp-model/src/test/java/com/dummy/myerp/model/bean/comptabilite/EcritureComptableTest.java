@@ -30,7 +30,11 @@ public class EcritureComptableTest {
         vEcriture.getListLigneEcriture().add(this.createLigne(1, "100.50", "33"));
         vEcriture.getListLigneEcriture().add(this.createLigne(2, null, "301"));
         vEcriture.getListLigneEcriture().add(this.createLigne(2, "40", "7"));
-        Assert.assertTrue(vEcriture.toString(), vEcriture.isEquilibree());
+        BigDecimal bd1 = new BigDecimal (34100).movePointLeft(2);
+        BigDecimal bd2 = new BigDecimal (341);
+        Assert.assertEquals(bd1, vEcriture.getTotalDebit());
+        Assert.assertEquals(bd2, vEcriture.getTotalCredit());
+        Assert.assertEquals(0, vEcriture.isEquilibree()); //a.compareTo(b);  // returns (-1 if a < b), (0 if a == b), (1 if a > b)
 
         vEcriture.getListLigneEcriture().clear();
         vEcriture.setLibelle("Non équilibrée");
@@ -38,7 +42,11 @@ public class EcritureComptableTest {
         vEcriture.getListLigneEcriture().add(this.createLigne(1, "20", "1"));
         vEcriture.getListLigneEcriture().add(this.createLigne(2, null, "30"));
         vEcriture.getListLigneEcriture().add(this.createLigne(2, "1", "2"));
-        Assert.assertFalse(vEcriture.toString(), vEcriture.isEquilibree());
+        bd1 = new BigDecimal (31);
+        bd2 = new BigDecimal (33);
+        Assert.assertEquals(bd1, vEcriture.getTotalDebit());
+        Assert.assertEquals(bd2, vEcriture.getTotalCredit());
+        Assert.assertEquals(-1, vEcriture.isEquilibree()); //a.compareTo(b);  // returns (-1 if a < b), (0 if a == b), (1 if a > b)
     }
 
 }
