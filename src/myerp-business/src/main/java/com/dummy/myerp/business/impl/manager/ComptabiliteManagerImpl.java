@@ -6,15 +6,12 @@ import java.util.Set;
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
 
+import com.dummy.myerp.model.bean.comptabilite.*;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.transaction.TransactionStatus;
 import com.dummy.myerp.business.contrat.manager.ComptabiliteManager;
 import com.dummy.myerp.business.impl.AbstractBusinessManager;
-import com.dummy.myerp.model.bean.comptabilite.CompteComptable;
-import com.dummy.myerp.model.bean.comptabilite.EcritureComptable;
-import com.dummy.myerp.model.bean.comptabilite.JournalComptable;
-import com.dummy.myerp.model.bean.comptabilite.LigneEcritureComptable;
 import com.dummy.myerp.technical.exception.FunctionalException;
 import com.dummy.myerp.technical.exception.NotFoundException;
 
@@ -62,7 +59,28 @@ public class ComptabiliteManagerImpl extends AbstractBusinessManager implements 
     @Override
     public synchronized void addReference(EcritureComptable pEcritureComptable) {
         // TODO à implémenter
+        String[] regex = new String[]{"/", "-"}; // Table des séparateurs identifiés
+        String[] codeAnneeNumeroArr = extractCodeAnneeNumero(pEcritureComptable.getReference(), regex); // [0] --> XX, [1] -> annee de l'écriture, [2] -> Numéro
+        SequenceEcritureComptable sequenceEcritureComptable = null;
+        if( codeAnneeNumeroArr[1] != null ){
+            int annee_found = Integer.parseInt(codeAnneeNumeroArr[1]);
+            try {
+                sequenceEcritureComptable = getDaoProxy().getComptabiliteDao().selectSequenceEcritureComptable(annee_found);
+                int numero = Integer.parseInt(codeAnneeNumeroArr[2]);
+                numero++; // On incrémente le numéro existant
+                codeAnneeNumeroArr[2] = calculateNumber(numero); // On recrée le #####
+                getDaoProxy().getComptabiliteDao().updateSequenceEcritureComptable(Integer.parseInt(codeAnneeNumeroArr[1]), numero, codeAnneeNumeroArr[0]);
+            } catch (NotFoundException nfe){
+                codeAnneeNumeroArr[2] = calculateNumber(1); // On recrée le #####
+                getDaoProxy().getComptabiliteDao().insertSQLinsertSequenceEcritureComptable(annee_found, Integer.parseInt(codeAnneeNumeroArr[1]),codeAnneeNumeroArr[0] );
+            }
 
+            //On reconcatène l'intégralité de la nouvelle référence. // A mettre dans une fonction pour la lisibilité.
+            StringBuilder stringBuilder = new StringBuilder();
+            stringBuilder.append(codeAnneeNumeroArr[0]).append(regex[1]).append(codeAnneeNumeroArr[1]).append(regex[0]).append(codeAnneeNumeroArr[2]);
+            String rebuiltReference = stringBuilder.toString();
+            pEcritureComptable.setReference(rebuiltReference);// Et on rajoute la référence à l'écriture comptable.
+        }
 
         // Bien se réferer à la JavaDoc de cette méthode !
         /* Le principe :
@@ -211,5 +229,31 @@ public class ComptabiliteManagerImpl extends AbstractBusinessManager implements 
         } finally {
             getTransactionManager().rollbackMyERP(vTS);
         }
+    }
+
+    private String[] extractCodeAnneeNumero(String libelle,String[] regex){ // Rappel : FORMAT XX-AAAA/#####
+
+        String[] annee_numero = new String[]{null, null, null}; // Table des résultats attendus
+        String[] first_delim =libelle.split(regex[0]); // On sépare XX-AAA et #####
+        if(first_delim.length == 3){
+            annee_numero[2] = first_delim[1];  // On récupère #####
+            String[] second_delim = first_delim[0].split(regex[1]); // On sépare XX et AAAA
+            if(second_delim.length == 2){
+                annee_numero[1] = second_delim[1]; // On récupère AAAA
+                annee_numero[0] = second_delim[0]; // On récupére XX
+            }
+        }
+        return annee_numero;
+    }
+
+    private String calculateNumber(int numero){
+        String numero_converted = Integer.toString(numero);
+        StringBuilder sb = new StringBuilder();
+        for(int i =   5 - numero_converted.length(); i > 0; i--){ // On met dans 0 dans les cases vides
+            sb.append("0");
+        }
+        sb.append(numero_converted);
+        numero_converted = sb.toString();
+        return numero_converted;
     }
 }
