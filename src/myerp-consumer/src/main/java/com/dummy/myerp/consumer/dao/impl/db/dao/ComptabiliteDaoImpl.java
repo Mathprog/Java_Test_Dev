@@ -13,11 +13,14 @@ import com.dummy.myerp.consumer.dao.contrat.ComptabiliteDao;
 import com.dummy.myerp.consumer.db.AbstractDbConsumer;
 import com.dummy.myerp.consumer.db.DataSourcesEnum;
 import com.dummy.myerp.technical.exception.NotFoundException;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 
 /**
  * Implémentation de l'interface {@link ComptabiliteDao}
  */
+@Transactional(propagation = Propagation.MANDATORY)
 public class ComptabiliteDaoImpl extends AbstractDbConsumer implements ComptabiliteDao {
 
     // ==================== Constructeurs ====================
@@ -308,7 +311,7 @@ public class ComptabiliteDaoImpl extends AbstractDbConsumer implements Comptabil
     private MapSqlParameterSource updateInsertSequenceEcritureComptable(int annee, int derniereValeur, String code){
         MapSqlParameterSource vSqlParams = new MapSqlParameterSource();
         vSqlParams.addValue("annee", annee);
-        vSqlParams.addValue("valeur", derniereValeur);
+        vSqlParams.addValue("derniere_valeur", derniereValeur);
         vSqlParams.addValue("code", code);
         return vSqlParams;
     }

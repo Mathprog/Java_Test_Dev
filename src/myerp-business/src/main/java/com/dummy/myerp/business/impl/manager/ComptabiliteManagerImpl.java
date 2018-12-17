@@ -1,6 +1,8 @@
 package com.dummy.myerp.business.impl.manager;
 
 import java.math.BigDecimal;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 import java.util.Set;
 import javax.validation.ConstraintViolation;
@@ -14,11 +16,14 @@ import com.dummy.myerp.business.contrat.manager.ComptabiliteManager;
 import com.dummy.myerp.business.impl.AbstractBusinessManager;
 import com.dummy.myerp.technical.exception.FunctionalException;
 import com.dummy.myerp.technical.exception.NotFoundException;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 
 
 /**
  * Comptabilite manager implementation.
  */
+@Transactional(propagation = Propagation.MANDATORY)
 public class ComptabiliteManagerImpl extends AbstractBusinessManager implements ComptabiliteManager {
 
     // ==================== Attributs ====================
@@ -60,7 +65,12 @@ public class ComptabiliteManagerImpl extends AbstractBusinessManager implements 
     public synchronized void addReference(EcritureComptable pEcritureComptable) {
         // TODO à implémenter
         String[] regex = new String[]{"/", "-"}; // Table des séparateurs identifiés
-        String[] codeAnneeNumeroArr = extractCodeAnneeNumero(pEcritureComptable.getReference(), regex); // [0] --> XX, [1] -> annee de l'écriture, [2] -> Numéro
+        String reference =pEcritureComptable.getReference();
+        if(reference == null){
+            reference = this.createReference(pEcritureComptable.getJournal().getCode(), pEcritureComptable.getDate(), regex);
+        }
+
+        String[] codeAnneeNumeroArr = extractCodeAnneeNumero(reference, regex); // [0] --> XX, [1] -> annee de l'écriture, [2] -> Numéro
         SequenceEcritureComptable sequenceEcritureComptable = null;
         if( codeAnneeNumeroArr[1] != null ){
             int annee_found = Integer.parseInt(codeAnneeNumeroArr[1]);
@@ -72,7 +82,7 @@ public class ComptabiliteManagerImpl extends AbstractBusinessManager implements 
                 getDaoProxy().getComptabiliteDao().updateSequenceEcritureComptable(Integer.parseInt(codeAnneeNumeroArr[1]), numero, codeAnneeNumeroArr[0]);
             } catch (NotFoundException nfe){
                 codeAnneeNumeroArr[2] = calculateNumber(1); // On recrée le #####
-                getDaoProxy().getComptabiliteDao().insertSQLinsertSequenceEcritureComptable(annee_found, Integer.parseInt(codeAnneeNumeroArr[1]),codeAnneeNumeroArr[0] );
+                getDaoProxy().getComptabiliteDao().insertSQLinsertSequenceEcritureComptable(annee_found, Integer.parseInt(codeAnneeNumeroArr[2]),codeAnneeNumeroArr[0] );
             }
 
             //On reconcatène l'intégralité de la nouvelle référence. // A mettre dans une fonction pour la lisibilité.
@@ -94,6 +104,16 @@ public class ComptabiliteManagerImpl extends AbstractBusinessManager implements 
                 4.  Enregistrer (insert/update) la valeur de la séquence en persitance
                     (table sequence_ecriture_comptable)
          */
+    }
+
+    private String createReference(String code, Date date, String[] regex) {
+        Calendar cal = Calendar.getInstance();
+        cal.setTime(date);
+        String annee = Integer.toString(cal.get(Calendar.YEAR));
+        StringBuilder sb = new StringBuilder();
+        sb.append(code).append(regex[1]).append(annee).append(regex[0]).append("00000");
+
+        return sb.toString();
     }
 
     /**
@@ -235,7 +255,7 @@ public class ComptabiliteManagerImpl extends AbstractBusinessManager implements 
 
         String[] annee_numero = new String[]{null, null, null}; // Table des résultats attendus
         String[] first_delim =libelle.split(regex[0]); // On sépare XX-AAA et #####
-        if(first_delim.length == 3){
+        if(first_delim.length == 2){
             annee_numero[2] = first_delim[1];  // On récupère #####
             String[] second_delim = first_delim[0].split(regex[1]); // On sépare XX et AAAA
             if(second_delim.length == 2){

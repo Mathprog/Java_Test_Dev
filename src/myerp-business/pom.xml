@@ -76,6 +76,13 @@
             <scope>test</scope>
         </dependency>
 
+        <!-- https://mvnrepository.com/artifact/org.springframework/spring-test -->
+        <dependency>
+            <groupId>org.springframework</groupId>
+            <artifactId>spring-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+
         <!-- ===== Database (pour les tests) ===== -->
         <!-- Pool de connexion -->
         <dependency>
@@ -99,9 +106,12 @@
         <!-- Profile utilisé pour lancer les tests d'intégration de la couche Business -->
         <profile>
             <id>test-business</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
             <build>
                 <plugins>
-                    <!-- Ajout du répertoire src/test-business/java en tant que source de test du module -->
+                    <!-- Ajout du répertoire src/test-myerptestbusinessbusiness/java en tant que source de test du module -->
                     <plugin>
                         <groupId>org.codehaus.mojo</groupId>
                         <artifactId>build-helper-maven-plugin</artifactId>
