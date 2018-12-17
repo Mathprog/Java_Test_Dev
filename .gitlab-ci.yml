@@ -1,14 +1,15 @@
-image: tmaier/docker-compose:latest
+image: maven:3.5.0-jdk-8-alpine
 
 services:
-  - docker:dind
+  - postgres:latest
 
 variables:
-  SPRING_PROFILES_ACTIVE: test-business
+  POSTGRES_DB: db_myerp
+  POSTGRES-USER: usr_myerp
+  POSTGRES_PASSWORD: myerp
 
 before_script:
-  - docker info
-  - docker-compose --version
+  - psql docker/dev/init/db/docker-entrypoint-initdb.d/01_create_schema.sql docker/dev/init/db/docker-entrypoint-initdb.d/02_create_tables.sql docker/dev/init/db/docker-entrypoint-initdb.d/21_insert_data_demo.sql
 
 compile:
     image: maven:3.5.4-jdk-8-alpine
@@ -20,12 +21,8 @@ compile:
 
 verify:
     image: maven:3.5.4-jdk-8-alpine
-    tags:
-      - docker
     script:
-      - cd docker/dev
-      - docker-compose up
-      - cd ../../src
+      - cd src
       - mvn clean verify
       - docker-compose stop
       - docker-compose rm -v
