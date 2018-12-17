@@ -1,13 +1,18 @@
-image: maven:3.5.4-jdk-8-alpine
+image: docker:latest
 
 services:
   - docker:dind
+
+variables:
+  DOCKER_DRIVER: overlay
+  SPRING_PROFILES_ACTIVE: test-business
 
 before_script:
   - apk add --no-cache py-pip
   - pip install docker-compose
 
 compile:
+    image: maven:3.5.4-jdk-8
     stage: build
     script:
         - cd src
@@ -15,8 +20,11 @@ compile:
 
 
 verify:
+    image: maven:3.5.4-jdk-8
     script:
       - cd docker/dev
       - docker-compose up
       - cd ../../src
       - mvn clean verify
+      - docker-compose stop
+      - docker-compose rm -v
