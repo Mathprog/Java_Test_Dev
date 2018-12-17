@@ -1,4 +1,4 @@
-image: docker:latest
+image: tmaier/docker-compose:latest
 
 services:
   - docker:dind
@@ -7,9 +7,8 @@ variables:
   SPRING_PROFILES_ACTIVE: test-business
 
 before_script:
-  - docker run -it docker /bin/sh
-  - apk add --no-cache py-pip
-  - pip install docker-compose
+  - docker info
+  - docker-compose --version
 
 compile:
     image: maven:3.5.4-jdk-8-alpine
@@ -21,8 +20,9 @@ compile:
 
 verify:
     image: maven:3.5.4-jdk-8-alpine
+    tags:
+      - docker
     script:
-      - export DOCKER_HOST="tcp://localhost:2375"
       - cd docker/dev
       - docker-compose up
       - cd ../../src
