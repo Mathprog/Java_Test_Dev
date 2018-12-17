@@ -1,31 +1,33 @@
-image: maven:3.5.0-jdk-8-alpine
-
-services:
-  - postgres:latest
-
 variables:
+  # This will supress any download for dependencies and plugins or upload messages which would clutter the console log.
+  # `showDateTime` will show the passed time in milliseconds. You need to specify `--batch-mode` to make this work.
+  MAVEN_OPTS: "-Dorg.slf4j.simpleLogger.log.org.apache.maven.cli.transfer.Slf4jMavenTransferListener=WARN -Dorg.slf4j.simpleLogger.showDateTime=true -Djava.awt.headless=true"
+  # As of Maven 3.3.0 instead of this you may define these options in `.mvn/maven.config` so the same config is used
+  # when running from the command line.
+  # `installAtEnd` and `deployAtEnd`are only effective with recent version of the corresponding plugins.
+  MAVEN_CLI_OPTS: "--batch-mode --errors --fail-at-end --show-version -DinstallAtEnd=true -DdeployAtEnd=true"
   POSTGRES_DB: db_myerp
   POSTGRES_USER: usr_myerp
   POSTGRES_PASSWORD: myerp
 
+cache:
+  paths:
+    - /root/.m2/repository
 
-connect:
-  image: postgres
+stages:
+  - build
+  - test
+
+validate:jdk8:
+  stage: build
   script:
-    # official way to provide password to psql: http://www.postgresql.org/docs/9.3/static/libpq-envars.html
-    - export PGPASSWORD=$POSTGRES_PASSWORD
-    - psql -h "postgres" -U "$POSTGRES_USER" -d "$POSTGRES_DB" -c "SELECT 'OK' AS status;"
+    - 'mvn $MAVEN_CLI_OPTS test-compile'
+  image: maven:3.5.0-jdk-8
 
-compile:
-    image: maven:3.5.4-jdk-8-alpine
-    stage: build
-    script:
-        - cd src
-        - mvn compile
-
-
-verify:
-    image: maven:3.5.4-jdk-8-alpine
-    script:
-      - cd src
-      - mvn clean verify
+deploy:jdk8:
+  stage: test
+  services:
+    - postgres:9.6
+  script:
+    - 'mvn verify'
+  image: maven:3.5.0-jdk-8
