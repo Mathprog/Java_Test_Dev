@@ -5,7 +5,7 @@ services:
 
 variables:
   POSTGRES_DB: db_myerp
-  POSTGRES-USER: usr_myerp
+  POSTGRES_USER: usr_myerp
   POSTGRES_PASSWORD: myerp
 
 before_script:
@@ -24,5 +24,3 @@ verify:
     script:
       - cd src
       - mvn clean verify
-      - docker-compose stop
-      - docker-compose rm -v
