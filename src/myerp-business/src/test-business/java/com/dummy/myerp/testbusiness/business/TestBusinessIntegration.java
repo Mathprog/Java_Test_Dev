@@ -10,6 +10,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.JUnit4;
 import org.springframework.test.context.ContextConfiguration;
+import org.springframework.test.context.jdbc.Sql;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.transaction.TransactionConfiguration;
 import org.springframework.transaction.annotation.Propagation;
@@ -20,6 +21,7 @@ import java.util.Date;
 
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(locations = "classpath:bootstrapContext.xml")
+@Sql({"classpath:sql/01_create_schema.sql", "classpath:sql/02_create_tables.sql", "classpath:sql/21_insert_data_demo.sql"})
 @Transactional(propagation = Propagation.REQUIRED)
 public class TestBusinessIntegration  extends BusinessTestCase {
 
