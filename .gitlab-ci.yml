@@ -9,7 +9,7 @@ variables:
   POSTGRES_PASSWORD: myerp
 
 before_script:
-  - sudo apt-get install -y postgresql postgresql-client libpq-dev
+  - su apt-get install -y postgresql postgresql-client libpq-dev
   - psql docker/dev/init/db/docker-entrypoint-initdb.d/01_create_schema.sql docker/dev/init/db/docker-entrypoint-initdb.d/02_create_tables.sql docker/dev/init/db/docker-entrypoint-initdb.d/21_insert_data_demo.sql
 
 compile:
