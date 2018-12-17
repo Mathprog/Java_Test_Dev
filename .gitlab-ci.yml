@@ -12,7 +12,7 @@ before_script:
   - pip install docker-compose
 
 compile:
-    image: maven:3.5.4-jdk-8
+    image: maven:3.5.4-jdk-8-alpine
     stage: build
     script:
         - cd src
@@ -20,7 +20,7 @@ compile:
 
 
 verify:
-    image: maven:3.5.4-jdk-8
+    image: maven:3.5.4-jdk-8-alpine
     script:
       - cd docker/dev
       - docker-compose up
