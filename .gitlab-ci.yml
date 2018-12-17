@@ -4,7 +4,6 @@ services:
   - docker:dind
 
 variables:
-  DOCKER_DRIVER: overlay
   SPRING_PROFILES_ACTIVE: test-business
 
 before_script:
@@ -22,6 +21,7 @@ compile:
 verify:
     image: maven:3.5.4-jdk-8-alpine
     script:
+      - export DOCKER_HOST="tcp://localhost:2375"
       - cd docker/dev
       - docker-compose up
       - cd ../../src
