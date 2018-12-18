@@ -268,10 +268,11 @@ public class ComptabiliteDaoImpl extends AbstractDbConsumer implements Comptabil
     }
 
     @Override
-    public SequenceEcritureComptable selectSequenceEcritureComptable(int annee) throws NotFoundException{
+    public SequenceEcritureComptable selectSequenceEcritureComptable(int annee, String code) throws NotFoundException{
         NamedParameterJdbcTemplate vJdbcTemplate = new NamedParameterJdbcTemplate(getDataSource(DataSourcesEnum.MYERP));
         MapSqlParameterSource vSqlParams = new MapSqlParameterSource();
         vSqlParams.addValue("annee", annee);
+        vSqlParams.addValue("code", code);
         SequenceEcritureComptableRM vRM = new SequenceEcritureComptableRM();
         SequenceEcritureComptable vBean;
         try {

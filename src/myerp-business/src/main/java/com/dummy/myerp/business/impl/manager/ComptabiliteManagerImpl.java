@@ -57,6 +57,18 @@ public class ComptabiliteManagerImpl extends AbstractBusinessManager implements 
         return getDaoProxy().getComptabiliteDao().getListEcritureComptable();
     }
 
+    @Override
+    public EcritureComptable getEcritureComptableById(int id) throws NotFoundException {
+        EcritureComptable ec = null;
+        try {
+            ec = getDaoProxy().getComptabiliteDao().getEcritureComptable(id);
+        } catch (NotFoundException nfe){
+            throw new NotFoundException();
+        }
+
+        return ec ;
+    }
+
     /**
      * {@inheritDoc}
      */
@@ -75,7 +87,7 @@ public class ComptabiliteManagerImpl extends AbstractBusinessManager implements 
         if( codeAnneeNumeroArr[1] != null ){
             int annee_found = Integer.parseInt(codeAnneeNumeroArr[1]);
             try {
-                sequenceEcritureComptable = getDaoProxy().getComptabiliteDao().selectSequenceEcritureComptable(annee_found);
+                sequenceEcritureComptable = getDaoProxy().getComptabiliteDao().selectSequenceEcritureComptable(annee_found, codeAnneeNumeroArr[0]);
                 int numero = Integer.parseInt(codeAnneeNumeroArr[2]);
                 numero++; // On incrémente le numéro existant
                 codeAnneeNumeroArr[2] = calculateNumber(numero); // On recrée le #####
@@ -174,6 +186,23 @@ public class ComptabiliteManagerImpl extends AbstractBusinessManager implements 
 
         // TODO ===== RG_Compta_5 : Format et contenu de la référence
         // vérifier que l'année dans la référence correspond bien à la date de l'écriture, idem pour le code journal...
+
+        if(pEcritureComptable.getReference() != null ){
+            String[] regex = new String[]{"/", "-"};
+            String[] referencesExplosed = {null, null, null};
+            referencesExplosed = this.extractCodeAnneeNumero(pEcritureComptable.getReference(),regex  );
+            if(!referencesExplosed[0].equals(pEcritureComptable.getJournal().getCode())){
+                throw new FunctionalException(
+                        "Le code dans la référence ne correspond pas au code du journal de l'écriture comptable.");
+            }
+            Calendar cal = Calendar.getInstance();
+            cal.setTime(pEcritureComptable.getDate());
+            String annee = Integer.toString(cal.get(Calendar.YEAR));
+            if(!referencesExplosed[1].equals(annee)){
+                throw new FunctionalException(
+                        "L'année de la référence ne correspond pas avec l'année de l'écriture comptable.");
+            }
+        }
     }
 
 
@@ -211,14 +240,7 @@ public class ComptabiliteManagerImpl extends AbstractBusinessManager implements 
     @Override
     public void insertEcritureComptable(EcritureComptable pEcritureComptable) throws FunctionalException {
         this.checkEcritureComptable(pEcritureComptable);
-        TransactionStatus vTS = getTransactionManager().beginTransactionMyERP();
-        try {
-            getDaoProxy().getComptabiliteDao().insertEcritureComptable(pEcritureComptable);
-            getTransactionManager().commitMyERP(vTS);
-            vTS = null;
-        } finally {
-            getTransactionManager().rollbackMyERP(vTS);
-        }
+        getDaoProxy().getComptabiliteDao().insertEcritureComptable(pEcritureComptable);
     }
 
     /**

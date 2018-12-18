@@ -7,6 +7,8 @@ import javax.validation.ValidatorFactory;
 
 import com.dummy.myerp.business.contrat.BusinessProxy;
 import com.dummy.myerp.consumer.dao.contrat.DaoProxy;
+import com.dummy.myerp.model.bean.comptabilite.EcritureComptable;
+import com.dummy.myerp.technical.exception.NotFoundException;
 
 
 /**
@@ -83,4 +85,6 @@ public abstract class AbstractBusinessManager {
         Validator vValidator = vFactory.getValidator();
         return vValidator;
     }
+
+   
 }
