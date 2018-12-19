@@ -55,11 +55,31 @@ public class TestBusinessIntegration  extends BusinessTestCase {
 
         EcritureComptable vEcritureComptableExisting = null;
         vEcritureComptableExisting = SpringRegistry.getBusinessProxy().getComptabiliteManager().getEcritureComptableById(-3);
-        Assert.assertEquals("BQ-2016/00003", vEcritureComptableExisting.getReference());
+        Assert.assertEquals("BQ-2016/00001", vEcritureComptableExisting.getReference());
 
         SpringRegistry.getBusinessProxy().getComptabiliteManager().checkEcritureComptable(vEcritureComptableExisting);
 
     }
+
+    @Test
+    public void testAddReferenceExistingReference() throws FunctionalException, NotFoundException{
+        EcritureComptable vEcritureComptableExisting = null;
+        vEcritureComptableExisting = SpringRegistry.getBusinessProxy().getComptabiliteManager().getEcritureComptableById(-5);
+        Assert.assertEquals("BQ-2016/00002", vEcritureComptableExisting.getReference());
+        SpringRegistry.getBusinessProxy().getComptabiliteManager().addReference(vEcritureComptableExisting);
+        Assert.assertEquals("BQ-2016/00003", vEcritureComptableExisting.getReference());
+        SpringRegistry.getBusinessProxy().getComptabiliteManager().checkEcritureComptable(vEcritureComptableExisting);
+    }
+
+    @Test(expected = FunctionalException.class)
+    public void testCheckWithExistingReference() throws FunctionalException, NotFoundException{
+        EcritureComptable vEcritureComptableExisting = null;
+        vEcritureComptableExisting = SpringRegistry.getBusinessProxy().getComptabiliteManager().getEcritureComptableById(-3);
+        Assert.assertNotEquals("BQ-2016/00005", vEcritureComptableExisting.getReference());
+        vEcritureComptableExisting.setReference("BQ-2016/00002");
+        SpringRegistry.getBusinessProxy().getComptabiliteManager().checkEcritureComptable(vEcritureComptableExisting);
+    }
+
 
     @Test(expected = FunctionalException.class)
     public void testCheckEcritureComptable_RG_5_code() throws FunctionalException{
@@ -113,6 +133,12 @@ public class TestBusinessIntegration  extends BusinessTestCase {
 
         vEcritureComptable.setReference("AC-2016/00001");
         SpringRegistry.getBusinessProxy().getComptabiliteManager().checkEcritureComptable(vEcritureComptable);
+    }
+
+    @Test
+    public void testInsertEcritureComptable(){
+
+
     }
 
 

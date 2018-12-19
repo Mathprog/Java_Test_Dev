@@ -88,7 +88,7 @@ public class ComptabiliteManagerImpl extends AbstractBusinessManager implements 
             int annee_found = Integer.parseInt(codeAnneeNumeroArr[1]);
             try {
                 sequenceEcritureComptable = getDaoProxy().getComptabiliteDao().selectSequenceEcritureComptable(annee_found, codeAnneeNumeroArr[0]);
-                int numero = Integer.parseInt(codeAnneeNumeroArr[2]);
+                int numero = sequenceEcritureComptable.getDerniereValeur();
                 numero++; // On incrémente le numéro existant
                 codeAnneeNumeroArr[2] = calculateNumber(numero); // On recrée le #####
                 getDaoProxy().getComptabiliteDao().updateSequenceEcritureComptable(Integer.parseInt(codeAnneeNumeroArr[1]), numero, codeAnneeNumeroArr[0]);
@@ -247,15 +247,9 @@ public class ComptabiliteManagerImpl extends AbstractBusinessManager implements 
      * {@inheritDoc}
      */
     @Override
-    public void updateEcritureComptable(EcritureComptable pEcritureComptable) throws FunctionalException {
-        TransactionStatus vTS = getTransactionManager().beginTransactionMyERP();
-        try {
-            getDaoProxy().getComptabiliteDao().updateEcritureComptable(pEcritureComptable);
-            getTransactionManager().commitMyERP(vTS);
-            vTS = null;
-        } finally {
-            getTransactionManager().rollbackMyERP(vTS);
-        }
+    public void updateEcritureComptable(EcritureComptable pEcritureComptable) throws FunctionalException{
+        this.checkEcritureComptable(pEcritureComptable);
+        getDaoProxy().getComptabiliteDao().updateEcritureComptable(pEcritureComptable);
     }
 
     /**
