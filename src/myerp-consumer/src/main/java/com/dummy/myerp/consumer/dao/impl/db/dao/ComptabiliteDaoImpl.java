@@ -139,6 +139,7 @@ public class ComptabiliteDaoImpl extends AbstractDbConsumer implements Comptabil
     public void setSQLloadListLigneEcriture(String pSQLloadListLigneEcriture) {
         SQLloadListLigneEcriture = pSQLloadListLigneEcriture;
     }
+
     @Override
     public void loadListLigneEcriture(EcritureComptable pEcritureComptable) {
         NamedParameterJdbcTemplate vJdbcTemplate = new NamedParameterJdbcTemplate(getDataSource(DataSourcesEnum.MYERP));
@@ -196,7 +197,7 @@ public class ComptabiliteDaoImpl extends AbstractDbConsumer implements Comptabil
             vSqlParams.addValue("compte_comptable_numero", vLigne.getCompteComptable().getNumero());
             vSqlParams.addValue("libelle", vLigne.getLibelle());
             vSqlParams.addValue("debit", vLigne.getDebit());
-
+            vSqlParams.addValue("ecriture_id", pEcritureComptable.getId());
             vSqlParams.addValue("credit", vLigne.getCredit());
 
             vJdbcTemplate.update(SQLinsertListLigneEcritureComptable, vSqlParams);
@@ -212,11 +213,18 @@ public class ComptabiliteDaoImpl extends AbstractDbConsumer implements Comptabil
         SQLupdateEcritureComptable = pSQLupdateEcritureComptable;
     }
     @Override
-    public void updateEcritureComptable(EcritureComptable pEcritureComptable) {
+    public void updateEcritureComptable(EcritureComptable pEcritureComptable) throws NotFoundException {
         // ===== Ecriture Comptable
         NamedParameterJdbcTemplate vJdbcTemplate = new NamedParameterJdbcTemplate(getDataSource(DataSourcesEnum.MYERP));
-
-
+        if(pEcritureComptable.getId() == null){
+            EcritureComptable vEC = null;
+            try {
+                vEC = this.getEcritureComptableByRef(pEcritureComptable.getReference());
+            } catch (NotFoundException nfe){
+                throw new NotFoundException("L'écriture comptable avec la référence : "+ pEcritureComptable.getReference() +" n'existe pas.");
+            }
+            pEcritureComptable.setId(vEC.getId());
+        }
         vJdbcTemplate.update(SQLupdateEcritureComptable, insertUpdateEcritureComptable(pEcritureComptable));
 
         // ===== Liste des lignes d'écriture

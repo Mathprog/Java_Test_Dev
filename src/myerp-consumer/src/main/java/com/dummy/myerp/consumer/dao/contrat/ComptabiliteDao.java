@@ -73,7 +73,7 @@ public interface ComptabiliteDao {
      *
      * @param pEcritureComptable -
      */
-    void updateEcritureComptable(EcritureComptable pEcritureComptable);
+    void updateEcritureComptable(EcritureComptable pEcritureComptable) throws NotFoundException;
 
     /**
      * Supprime l'écriture comptable d'id {@code pId}.

@@ -249,7 +249,11 @@ public class ComptabiliteManagerImpl extends AbstractBusinessManager implements 
     @Override
     public void updateEcritureComptable(EcritureComptable pEcritureComptable) throws FunctionalException{
         this.checkEcritureComptable(pEcritureComptable);
-        getDaoProxy().getComptabiliteDao().updateEcritureComptable(pEcritureComptable);
+        try {
+            getDaoProxy().getComptabiliteDao().updateEcritureComptable(pEcritureComptable);
+        } catch (NotFoundException e) {
+            e.printStackTrace();
+        }
     }
 
     /**
@@ -257,14 +261,7 @@ public class ComptabiliteManagerImpl extends AbstractBusinessManager implements 
      */
     @Override
     public void deleteEcritureComptable(Integer pId) {
-        TransactionStatus vTS = getTransactionManager().beginTransactionMyERP();
-        try {
-            getDaoProxy().getComptabiliteDao().deleteEcritureComptable(pId);
-            getTransactionManager().commitMyERP(vTS);
-            vTS = null;
-        } finally {
-            getTransactionManager().rollbackMyERP(vTS);
-        }
+        getDaoProxy().getComptabiliteDao().deleteEcritureComptable(pId);
     }
 
     private String[] extractCodeAnneeNumero(String libelle,String[] regex){ // Rappel : FORMAT XX-AAAA/#####
