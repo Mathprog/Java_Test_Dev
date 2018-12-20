@@ -11,7 +11,6 @@ import javax.validation.ConstraintViolationException;
 import com.dummy.myerp.model.bean.comptabilite.*;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
-import org.springframework.transaction.TransactionStatus;
 import com.dummy.myerp.business.contrat.manager.ComptabiliteManager;
 import com.dummy.myerp.business.impl.AbstractBusinessManager;
 import com.dummy.myerp.technical.exception.FunctionalException;
@@ -72,10 +71,9 @@ public class ComptabiliteManagerImpl extends AbstractBusinessManager implements 
     /**
      * {@inheritDoc}
      */
-    // TODO à tester
     @Override
     public synchronized void addReference(EcritureComptable pEcritureComptable) {
-        // TODO à implémenter
+
         String[] regex = new String[]{"/", "-"}; // Table des séparateurs identifiés
         String reference =pEcritureComptable.getReference();
         if(reference == null){
@@ -131,7 +129,7 @@ public class ComptabiliteManagerImpl extends AbstractBusinessManager implements 
     /**
      * {@inheritDoc}
      */
-    // TODO à tester
+
     @Override
     public void checkEcritureComptable(EcritureComptable pEcritureComptable) throws FunctionalException {
         this.checkEcritureComptableUnit(pEcritureComptable);
@@ -146,7 +144,7 @@ public class ComptabiliteManagerImpl extends AbstractBusinessManager implements 
      * @param pEcritureComptable -
      * @throws FunctionalException Si l'Ecriture comptable ne respecte pas les règles de gestion
      */
-    // TODO tests à compléter
+
     protected void checkEcritureComptableUnit(EcritureComptable pEcritureComptable) throws FunctionalException {
         // ===== Vérification des contraintes unitaires sur les attributs de l'écriture
         Set<ConstraintViolation<EcritureComptable>> vViolations = getConstraintValidator().validate(pEcritureComptable);
@@ -247,13 +245,9 @@ public class ComptabiliteManagerImpl extends AbstractBusinessManager implements 
      * {@inheritDoc}
      */
     @Override
-    public void updateEcritureComptable(EcritureComptable pEcritureComptable) throws FunctionalException{
+    public void updateEcritureComptable(EcritureComptable pEcritureComptable) throws FunctionalException, NotFoundException {
         this.checkEcritureComptable(pEcritureComptable);
-        try {
-            getDaoProxy().getComptabiliteDao().updateEcritureComptable(pEcritureComptable);
-        } catch (NotFoundException e) {
-            e.printStackTrace();
-        }
+        getDaoProxy().getComptabiliteDao().updateEcritureComptable(pEcritureComptable);
     }
 
     /**

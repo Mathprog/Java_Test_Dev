@@ -77,7 +77,7 @@ public interface ComptabiliteManager {
      * @param pEcritureComptable -
      * @throws FunctionalException Si l'Ecriture comptable ne respecte pas les règles de gestion
      */
-    void updateEcritureComptable(EcritureComptable pEcritureComptable) throws FunctionalException;
+    void updateEcritureComptable(EcritureComptable pEcritureComptable) throws FunctionalException, NotFoundException;
 
     /**
      * Supprime l'écriture comptable d'id {@code pId}.
