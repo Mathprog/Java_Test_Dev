@@ -51,7 +51,7 @@ public class TestBusinessIntegration  extends BusinessTestCase {
                 null, null,
                 new BigDecimal(123)));
        SpringRegistry.getBusinessProxy().getComptabiliteManager().addReference(vEcritureComptable);
-        Assert.assertEquals("AC-2018/00001", vEcritureComptable.getReference());
+        Assert.assertEquals("AC-2019/00001", vEcritureComptable.getReference());
 
         SpringRegistry.getBusinessProxy().getComptabiliteManager().insertEcritureComptable(vEcritureComptable);
 
@@ -107,7 +107,7 @@ public class TestBusinessIntegration  extends BusinessTestCase {
                 null, null,
                 new BigDecimal(123)));
 
-        vEcritureComptable.setReference("BC-2018/00001");
+        vEcritureComptable.setReference("BC-2019/00001");
         SpringRegistry.getBusinessProxy().getComptabiliteManager().checkEcritureComptable(vEcritureComptable);
     }
 
@@ -128,7 +128,7 @@ public class TestBusinessIntegration  extends BusinessTestCase {
                 null, null,
                 new BigDecimal(123)));
 
-        vEcritureComptable.setReference("AC-2017/00001");
+        vEcritureComptable.setReference("AC-2018/00001");
         SpringRegistry.getBusinessProxy().getComptabiliteManager().checkEcritureComptable(vEcritureComptable);
     }
 
