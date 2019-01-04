@@ -166,7 +166,8 @@
                                 </goals>
                                 <configuration>
                                     <sources>
-                                        <source>src/test-business/java</source>
+                                        <source>src/test/java</source>
+                                        <source>src/test-business/integration/java</source>
                                     </sources>
                                 </configuration>
                             </execution>
