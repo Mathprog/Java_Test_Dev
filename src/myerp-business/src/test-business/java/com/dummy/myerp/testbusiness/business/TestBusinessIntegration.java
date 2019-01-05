@@ -72,6 +72,26 @@ public class TestBusinessIntegration  extends BusinessTestCase {
     }
 
     /*
+        On test qu'il y a bien deux lignes comptables.
+     */
+    @Test
+    public void testAddReference_DeuxLignesComptables() throws FunctionalException {
+        EcritureComptable vEcritureComptable;
+        vEcritureComptable = new EcritureComptable();
+        vEcritureComptable.setJournal(new JournalComptable("AC", "Achat"));
+        vEcritureComptable.setDate(new Date());
+        vEcritureComptable.setLibelle("Libelle");
+        vEcritureComptable.getListLigneEcriture().add(new LigneEcritureComptable(new CompteComptable(401),
+                null, new BigDecimal(123),
+                new BigDecimal(123)));
+        vEcritureComptable.getListLigneEcriture().add(new LigneEcritureComptable(new CompteComptable(401),
+                null, new BigDecimal(123),
+                new BigDecimal(123)));
+        SpringRegistry.getBusinessProxy().getComptabiliteManager().addReference(vEcritureComptable);
+        SpringRegistry.getBusinessProxy().getComptabiliteManager().checkEcritureComptable(vEcritureComptable);
+    }
+
+    /*
         On test que le addReference fonctionne bien lorsqu'une référence existe déjà."
      */
 
@@ -209,10 +229,62 @@ public class TestBusinessIntegration  extends BusinessTestCase {
     }
 
     /*
+        On vérifie que la date de l'écriture corresponde bien avec la référence lors de l'update.
+     */
+    @Test(expected = FunctionalException.class)
+    public void testUpdateEcritureComptable_Date() throws FunctionalException, NotFoundException{
+        EcritureComptable vEcritureComptable;
+        vEcritureComptable = new EcritureComptable();
+        vEcritureComptable.setJournal(new JournalComptable("AC", "Achat"));
+        vEcritureComptable.setDate(new Date());
+        vEcritureComptable.setLibelle("Libelle");
+        vEcritureComptable.getListLigneEcriture().add(new LigneEcritureComptable(new CompteComptable(401),
+                null, new BigDecimal(123),
+                null));
+        vEcritureComptable.getListLigneEcriture().add(new LigneEcritureComptable(new CompteComptable(401),
+                null, null,
+                new BigDecimal(123)));
+        vEcritureComptable.setReference("AC-2016/00001");
+        SpringRegistry.getBusinessProxy().getComptabiliteManager().updateEcritureComptable(vEcritureComptable);
+    }
+
+    /*
+       On vérifie que la date de l'écriture corresponde bien avec la référence lors de l'update.
+    */
+    @Test(expected = NotFoundException.class)
+    public void testUpdateEcritureComptable_DateNotFound() throws FunctionalException, NotFoundException{
+        EcritureComptable vEcritureComptable;
+        vEcritureComptable = new EcritureComptable();
+        vEcritureComptable.setJournal(new JournalComptable("AC", "Achat"));
+        vEcritureComptable.setDate(new Date());
+        vEcritureComptable.setLibelle("Libelle");
+        vEcritureComptable.getListLigneEcriture().add(new LigneEcritureComptable(new CompteComptable(401),
+                null, new BigDecimal(123),
+                null));
+        vEcritureComptable.getListLigneEcriture().add(new LigneEcritureComptable(new CompteComptable(401),
+                null, null,
+                new BigDecimal(123)));
+        vEcritureComptable.setReference("AC-2019/00001");
+        SpringRegistry.getBusinessProxy().getComptabiliteManager().updateEcritureComptable(vEcritureComptable);
+    }
+    /*
+           On vérifie que la date de l'écriture corresponde bien avec la référence lors de l'update.
+        */
+    @Test
+    public void testUpdateEcritureComptable() throws FunctionalException, NotFoundException{
+        EcritureComptable vEcritureComptable;
+        vEcritureComptable = SpringRegistry.getBusinessProxy().getComptabiliteManager().getEcritureComptableById(-2);
+        SpringRegistry.getBusinessProxy().getComptabiliteManager().addReference(vEcritureComptable);
+        SpringRegistry.getBusinessProxy().getComptabiliteManager().updateEcritureComptable(vEcritureComptable);
+    }
+
+
+
+    /*
         On vérifie que si on fait un update sur une EcritureComptable et que la référence existe déjà ailleurs alors Throw.
      */
     @Test(expected = FunctionalException.class)
-    public void testUpdateEcritureComptable_RefUniqueError() throws FunctionalException{
+    public void testUpdateEcritureComptable_RefUniqueError() throws FunctionalException, NotFoundException{
         long twoYearsMilliseconds = 2 * 365 * 24 * 60 * 60 * 1000L;
         EcritureComptable vEcritureComptable;
         vEcritureComptable = new EcritureComptable();
@@ -226,11 +298,8 @@ public class TestBusinessIntegration  extends BusinessTestCase {
                 null, null,
                 new BigDecimal(123)));
         vEcritureComptable.setReference("VE-2016/00002");
-        try {
-            SpringRegistry.getBusinessProxy().getComptabiliteManager().updateEcritureComptable(vEcritureComptable);
-        } catch (NotFoundException e) {
-            e.printStackTrace();
-        }
+        SpringRegistry.getBusinessProxy().getComptabiliteManager().updateEcritureComptable(vEcritureComptable);
+
     }
 
     /*

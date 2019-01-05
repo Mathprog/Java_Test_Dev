@@ -47,6 +47,21 @@ public class EcritureComptableTest {
         Assert.assertEquals(bd1, vEcriture.getTotalDebit());
         Assert.assertEquals(bd2, vEcriture.getTotalCredit());
         Assert.assertEquals(-1, vEcriture.isEquilibree()); //a.compareTo(b);  // returns (-1 if a < b), (0 if a == b), (1 if a > b)
+        System.out.println(vEcriture.toString());
+
+        LigneEcritureComptable ligneEcritureComptabletest = this.createLigne(1, "200.50", null);
+        System.out.println(ligneEcritureComptabletest.toString());
+
+        JournalComptable journalComptable = new JournalComptable("AC", "Achat");
+        System.out.println(journalComptable.toString());
+
+        CompteComptable compteComptable = new CompteComptable(401);
+        System.out.println(compteComptable.toString());
+        compteComptable.setLibelle("Libelle");
+        Assert.assertEquals("Libelle", compteComptable.getLibelle());
+
+        SequenceEcritureComptable sequenceEcritureComptable = new SequenceEcritureComptable(2018, 2);
+        System.out.println(sequenceEcritureComptable.toString());
     }
 
 }

@@ -1,5 +1,13 @@
 ﻿# MyERP
 
+
+#### Docker était sous windows. L'adresse Ip par défaut est 192.168.99.100 sous windows.
+
+Il y a deux profils de tests:
+- test-business qui test l'application en mode développement en local.
+- test-business-integration qui test l'application sur gitlab-ci (tests d'intégrations.)
+
+
 ## Organisation du répertoire
 
 *   
