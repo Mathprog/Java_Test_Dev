@@ -65,7 +65,7 @@ public class TestBusinessIntegration  extends BusinessTestCase {
         SpringRegistry.getBusinessProxy().getComptabiliteManager().insertEcritureComptable(vEcritureComptable);
 
         EcritureComptable vEcritureComptableExisting = null;
-        vEcritureComptableExisting = SpringRegistry.getBusinessProxy().getComptabiliteManager().getEcritureComptableById(-3);
+        vEcritureComptableExisting = SpringRegistry.getBusinessProxy().getComptabiliteManager().getEcritureComptableById(3);
         Assert.assertEquals("BQ-2016/00001", vEcritureComptableExisting.getReference());
 
         SpringRegistry.getBusinessProxy().getComptabiliteManager().checkEcritureComptable(vEcritureComptableExisting);
@@ -98,7 +98,7 @@ public class TestBusinessIntegration  extends BusinessTestCase {
     @Test
     public void testAddReferenceExistingReference() throws FunctionalException, NotFoundException{
         EcritureComptable vEcritureComptableExisting = null;
-        vEcritureComptableExisting = SpringRegistry.getBusinessProxy().getComptabiliteManager().getEcritureComptableById(-5);
+        vEcritureComptableExisting = SpringRegistry.getBusinessProxy().getComptabiliteManager().getEcritureComptableById(5);
         Assert.assertEquals("BQ-2016/00002", vEcritureComptableExisting.getReference());
         SpringRegistry.getBusinessProxy().getComptabiliteManager().addReference(vEcritureComptableExisting);
         Assert.assertEquals("BQ-2016/00003", vEcritureComptableExisting.getReference());
@@ -112,7 +112,7 @@ public class TestBusinessIntegration  extends BusinessTestCase {
     @Test(expected = FunctionalException.class)
     public void testCheckWithExistingReference() throws FunctionalException, NotFoundException{
         EcritureComptable vEcritureComptableExisting = null;
-        vEcritureComptableExisting = SpringRegistry.getBusinessProxy().getComptabiliteManager().getEcritureComptableById(-3);
+        vEcritureComptableExisting = SpringRegistry.getBusinessProxy().getComptabiliteManager().getEcritureComptableById(3);
         Assert.assertNotEquals("BQ-2016/00005", vEcritureComptableExisting.getReference());
         vEcritureComptableExisting.setReference("BQ-2016/00002");
         SpringRegistry.getBusinessProxy().getComptabiliteManager().checkEcritureComptable(vEcritureComptableExisting);
@@ -273,7 +273,7 @@ public class TestBusinessIntegration  extends BusinessTestCase {
     @Test
     public void testUpdateEcritureComptable() throws FunctionalException, NotFoundException{
         EcritureComptable vEcritureComptable;
-        vEcritureComptable = SpringRegistry.getBusinessProxy().getComptabiliteManager().getEcritureComptableById(-2);
+        vEcritureComptable = SpringRegistry.getBusinessProxy().getComptabiliteManager().getEcritureComptableById(2);
         SpringRegistry.getBusinessProxy().getComptabiliteManager().addReference(vEcritureComptable);
         SpringRegistry.getBusinessProxy().getComptabiliteManager().updateEcritureComptable(vEcritureComptable);
     }
@@ -330,10 +330,10 @@ public class TestBusinessIntegration  extends BusinessTestCase {
     @Test(expected = NotFoundException.class)
     public void testDeleteEcritureComptable() throws NotFoundException{
         EcritureComptable vEcritureComptableExisting = null;
-        vEcritureComptableExisting = SpringRegistry.getBusinessProxy().getComptabiliteManager().getEcritureComptableById(-3);
+        vEcritureComptableExisting = SpringRegistry.getBusinessProxy().getComptabiliteManager().getEcritureComptableById(3);
 
-        getBusinessProxy().getComptabiliteManager().deleteEcritureComptable(-3);
-        vEcritureComptableExisting = SpringRegistry.getBusinessProxy().getComptabiliteManager().getEcritureComptableById(-3);
+        getBusinessProxy().getComptabiliteManager().deleteEcritureComptable(3);
+        vEcritureComptableExisting = SpringRegistry.getBusinessProxy().getComptabiliteManager().getEcritureComptableById(3);
     }
 
     /*
@@ -371,7 +371,7 @@ public class TestBusinessIntegration  extends BusinessTestCase {
      */
     @Test
     public void testGetEcritureComptableById_Work() throws NotFoundException{
-        EcritureComptable ecritureComptable = getBusinessProxy().getComptabiliteManager().getEcritureComptableById(-3);
+        EcritureComptable ecritureComptable = getBusinessProxy().getComptabiliteManager().getEcritureComptableById(3);
         Assert.assertEquals(2, ecritureComptable.getListLigneEcriture().size());
     }
 
@@ -380,6 +380,6 @@ public class TestBusinessIntegration  extends BusinessTestCase {
      */
     @Test(expected = NotFoundException.class)
     public void testGetEcritureComptableById_Throw() throws NotFoundException{
-        EcritureComptable ecritureComptable = getBusinessProxy().getComptabiliteManager().getEcritureComptableById(-7);
+        EcritureComptable ecritureComptable = getBusinessProxy().getComptabiliteManager().getEcritureComptableById(7);
     }
 }

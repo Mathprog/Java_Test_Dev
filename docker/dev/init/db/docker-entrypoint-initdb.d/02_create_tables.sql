@@ -15,6 +15,7 @@ CREATE TABLE MYERP.sequence_ecriture_comptable (
 
 
 CREATE SEQUENCE MYERP.ecriture_comptable_id_seq;
+SELECT setval('myerp.ecriture_comptable_id_seq', 6, true);
 
 CREATE TABLE MYERP.ecriture_comptable (
                 id INTEGER NOT NULL DEFAULT nextval('MYERP.ecriture_comptable_id_seq'),
