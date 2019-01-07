@@ -210,7 +210,7 @@ public class ComptabiliteDaoImpl extends AbstractDbConsumer implements Comptabil
     /** SQLupdateEcritureComptable */
     private static String SQLupdateEcritureComptable;
     public void setSQLupdateEcritureComptable(String pSQLupdateEcritureComptable) {
-        SQLupdateEcritureComptable = pSQLupdateEcritureComptable;
+        SQLupdateEcritureComptable = pSQLupdateEcritureComptable;  
     }
     @Override
     public void updateEcritureComptable(EcritureComptable pEcritureComptable) throws NotFoundException {
