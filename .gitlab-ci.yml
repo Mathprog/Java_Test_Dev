@@ -25,4 +25,9 @@ deploy:jdk8:
   script:
     - cd src
     - 'mvn verify -Ptest-business-integration'
+  artifacts:
+    reports:
+      junit:
+        - target/surefire-reports/TEST-*.xml
+        - target/failsafe-reports/TEST-*.xml
   image: maven:3.5.0-jdk-8
